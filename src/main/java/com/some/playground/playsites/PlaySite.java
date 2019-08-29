@@ -7,6 +7,7 @@ import com.some.playground.visiting.Kid;
 import com.some.playground.visiting.TicketRegistry;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -23,7 +24,7 @@ public abstract class PlaySite {
     private int nextVipPosition = 0;
 
     private ArrayList<Kid> waitingQueue;
-    private ConcurrentHashMap<Kid, Long> playingKids;
+    private ConcurrentHashMap<Kid, LocalDateTime> playingKids;
 
     private ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 
@@ -38,7 +39,7 @@ public abstract class PlaySite {
         try {
             readWriteLock.writeLock().lock();
             if (!waitingQueue.remove(kid)) {
-                Long playStartTime = playingKids.remove(kid);
+                LocalDateTime playStartTime = playingKids.remove(kid);
                 if (null != playStartTime) {
                     registerHistory(kid, playStartTime);
                     letOtherKidPlay();
@@ -52,9 +53,9 @@ public abstract class PlaySite {
         }
     }
 
-    private void registerHistory(Kid kid, Long playStartTime) {
+    private void registerHistory(Kid kid, LocalDateTime playStartTime) {
         HistoryManager.getInstance().addHistoryRecord(kid,
-                new KidHistoryRecord(playStartTime, System.currentTimeMillis(), this));
+                new KidHistoryRecord(this, playStartTime, LocalDateTime.now()));
     }
 
     private void letOtherKidPlay() {
@@ -81,7 +82,7 @@ public abstract class PlaySite {
     }
 
     private void letKidPlay(Kid kid) {
-        playingKids.put(kid, System.currentTimeMillis());
+        playingKids.put(kid, LocalDateTime.now());
         SiteVisitorCounter.getInstance().registerVisitor(this);
     }
 

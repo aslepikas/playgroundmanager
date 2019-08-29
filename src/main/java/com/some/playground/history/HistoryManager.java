@@ -30,7 +30,7 @@ public class HistoryManager {
         }
     }
 
-    private List<KidHistoryRecord> getKidPlayHistory(Kid kid) {
+    public List<KidHistoryRecord> getKidPlayHistory(Kid kid) {
         return Collections.unmodifiableList(kidHistoryMap.get(kid));
     }
 

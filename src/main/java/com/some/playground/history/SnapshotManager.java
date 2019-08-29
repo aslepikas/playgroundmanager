@@ -4,6 +4,7 @@ import com.some.playground.playsites.PlaySite;
 import com.some.playground.util.TimeUtil;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +15,7 @@ import java.util.stream.Collectors;
 
 public class SnapshotManager {
 
-    private final List<Snapshot> snapshotHistory = new LinkedList<>();
+    private List<Snapshot> snapshotHistory = new LinkedList<>();
     private Map<String, PlaySite> playSiteMap;
     private ScheduledThreadPoolExecutor scheduledExecutorService = new ScheduledThreadPoolExecutor(1);
     private ScheduledFuture scheduledTask;
@@ -33,7 +34,7 @@ public class SnapshotManager {
             return;
         }
 
-        snapshotHistory.add(new Snapshot(System.currentTimeMillis(),
+        snapshotHistory.add(new Snapshot(LocalDateTime.now(),
                 playSiteMap.entrySet().stream()
                         .map(entry -> new UtilisationRecord(entry.getKey(), entry.getValue().getUtilisation()))
                         .collect(Collectors.toSet())));
@@ -53,8 +54,8 @@ public class SnapshotManager {
                 .scheduleAtFixedRate(this::takeSnapshot, delay, snaphotIntervalMillis, TimeUnit.MILLISECONDS);
     }
 
-    public List<Snapshot> getSnapshotHistory(long startTimeMillis, long endTimeMillis) {
-        return snapshotHistory.stream().filter(snapshot -> snapshot.getTimeMillis() >= startTimeMillis &&
-                snapshot.getTimeMillis() <= endTimeMillis).collect(Collectors.toList());
+    public List<Snapshot> getSnapshotHistory(LocalDateTime startTime, LocalDateTime endTime) {
+        return snapshotHistory.stream().filter(snapshot -> snapshot.getDateTime().isAfter(startTime) &&
+                snapshot.getDateTime().isBefore(endTime)).collect(Collectors.toList());
     }
 }

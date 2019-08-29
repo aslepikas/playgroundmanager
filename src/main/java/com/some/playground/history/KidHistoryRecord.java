@@ -4,12 +4,14 @@ import com.some.playground.playsites.PlaySite;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @RequiredArgsConstructor
 @Getter
 public class KidHistoryRecord {
 
-    private final long startTimeMillis;
-    private final long endTimeMillis;
     private final PlaySite playSite;
+    private final LocalDateTime startTime;
+    private final LocalDateTime endTime;
 
 }

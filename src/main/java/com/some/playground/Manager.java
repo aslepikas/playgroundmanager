@@ -13,8 +13,12 @@ public class Manager {
         this.playSiteMap = new ConcurrentHashMap<>();
     }
 
-    private void RegisterSite(PlaySite playSite) {
+    public void registerSite(PlaySite playSite) {
         playSiteMap.put(playSite.getId(), playSite);
+    }
+
+    public PlaySite getSite(String id) {
+        return playSiteMap.get(id);
     }
 
     public SnapshotManager startTakingSnapshotsWithInterval(long snapshotInterval) {
